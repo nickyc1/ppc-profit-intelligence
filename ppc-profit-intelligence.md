@@ -98,6 +98,86 @@ Add as a separate trigger, runs hourly 9am–6pm.
 
 Pull today's cumulative spend. Compare to expected hourly pacing (daily budget / hours elapsed). If 20%+ over or under pace, Slack alert with projected daily total at current run rate.
 
+### Step 6 — Change History Review & Account Grading
+
+This is a weekly/monthly trigger that audits every change made to the account, grades the person managing it, and recommends what should have been done differently.
+
+**Trigger:** Run weekly (Friday 5pm) or monthly (1st of month).
+
+**6A — Pull Full Change History**
+
+Pull every change made to the account during the review period:
+
+```sql
+SELECT change_event.change_date_time,
+       change_event.change_resource_type,
+       change_event.changed_fields,
+       change_event.old_resource,
+       change_event.new_resource,
+       change_event.user_email,
+       change_event.client_type,
+       campaign.name,
+       ad_group.name
+FROM change_event
+WHERE change_event.change_date_time DURING LAST_7_DAYS
+ORDER BY change_event.change_date_time DESC
+```
+
+This captures every bid adjustment, budget change, keyword add/pause, ad creation/edit, audience change, and campaign setting modification — along with WHO made the change and WHEN.
+
+**6B — Categorize Every Change**
+
+Group changes into categories:
+- **Budget changes** — increases, decreases, shared budget modifications
+- **Bid adjustments** — manual CPC changes, target CPA/ROAS changes, bid strategy switches
+- **Keyword management** — new keywords added, keywords paused, negative keywords added, match type changes
+- **Ad creative** — new ads created, ads paused, RSA asset changes, ad copy edits
+- **Targeting changes** — audience additions/removals, location targeting, device bid adjustments, dayparting changes
+- **Campaign structure** — new campaigns, paused campaigns, new ad groups, campaign setting changes
+- **Automated vs manual** — flag which changes came from Google's auto-apply recommendations vs. human decisions
+
+**6C — Measure Impact of Each Change**
+
+For every change, pull performance data for the 7 days before and 7 days after:
+- Compare spend, clicks, conversions, CPA, and true ROAS pre vs post change
+- Calculate the delta: did this change improve or hurt performance?
+- Flag changes that had no measurable impact (wasted effort)
+- Flag changes that hurt performance (negative impact)
+- Flag changes where Google's auto-apply made things worse
+
+**6D — Grade the Account Manager**
+
+Score the review period on a 0-100 scale across these dimensions:
+
+| Dimension | Weight | What it measures |
+|---|---|---|
+| **Spend efficiency** | 25% | Did budget flow to the highest true-ROAS campaigns? Were losers cut? |
+| **Optimization velocity** | 20% | How many meaningful changes were made? Were problems addressed quickly? |
+| **Negative keyword hygiene** | 15% | Were wasteful search terms caught and negated? How much spend leaked? |
+| **Creative testing** | 15% | Were new ads tested? Were underperformers rotated out? |
+| **Bid strategy alignment** | 15% | Are bid strategies matched to campaign goals? Were bid adjustments data-driven? |
+| **Missed opportunities** | 10% | Were there scaling opportunities (high ROAS + low spend) that went untouched? |
+
+Output a letter grade (A through F) with a numerical score and a one-paragraph summary.
+
+**6E — Generate Recommendations**
+
+For each category, compare what WAS done against what SHOULD have been done based on the performance data:
+
+- "Budget was increased 30% on Campaign X, but true ROAS was only 0.8x. Recommendation: This budget should have been shifted to Campaign Y which had 4.2x true ROAS and was spend-constrained."
+- "No negative keywords were added despite 'free' appearing in 47 search terms costing $312. Recommendation: Add 'free' as a campaign-level negative immediately."
+- "Google auto-applied a broad match recommendation that increased CPA by 22%. Recommendation: Revert to exact/phrase match and disable auto-apply for match type changes."
+- "No new ad copy was tested in 30 days. Top performing RSA has been running since January. Recommendation: Launch 2 new RSA variants testing different value props."
+
+**6F — Output**
+
+Write the full review to a "Change History Reviews" tab in Google Sheets. Send a formatted Slack message with:
+- Overall grade and score
+- Top 3 best decisions made (with impact data)
+- Top 3 worst decisions or missed opportunities
+- Prioritized action items for next week
+- A note on any Google auto-apply changes that should be disabled
+
 ---
 
 ## PART 2: SETUP STEPS
