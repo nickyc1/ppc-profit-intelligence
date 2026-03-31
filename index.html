@@ -77,52 +77,7 @@
     line-height: 1.6;
   }
 
-  /* What you get */
-  .what-you-get {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 28px 24px;
-    margin-bottom: 36px;
-  }
-
-  .what-you-get h2 {
-    font-family: 'Barlow', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--slate);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 16px;
-  }
-
-  .checklist {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .checklist li {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 15px;
-    color: var(--gravel);
-  }
-
-  .checklist li::before {
-    content: "→";
-    color: var(--green);
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .checklist li strong {
-    color: var(--white);
-    font-weight: 600;
-  }
+  /* (what-you-get section removed — merged into preview block) */
 
   /* Form */
   .form-section {
@@ -312,6 +267,11 @@
 
   .preview .dim { color: var(--slate); }
   .preview .kw { color: var(--green); }
+  .preview .step-num { color: var(--cyan); font-weight: 500; }
+  .preview .conn { color: var(--cyan); }
+  .preview .divider { color: rgba(255,255,255,0.12); }
+  .file-preview { background: var(--midnight); }
+  .file-preview code { font-size: 13px; line-height: 1.8; }
 
   /* Footer */
   .footer {
@@ -345,39 +305,51 @@
 
   <div class="badge">Free Agent Prompt + Setup Guide</div>
 
-  <h1>Stop trusting Google's <span class="accent">conversion numbers.</span></h1>
+  <h1>Google Ads <span class="accent">n8n Workflow</span> Download</h1>
 
   <p class="subtitle">
-    Get the exact prompt you can give your AI agent to build a PPC profit intelligence system — pulls real spend from APIs, joins it with your actual revenue, and tells you what's really making money. Every morning. Automatically.
+    An agent prompt + setup guide that builds a complete PPC profit intelligence system. Pulls real spend from APIs, joins it with your actual revenue, and tells you what's making money. Every morning. Automatically.
   </p>
 
-  <!-- What you get -->
-  <div class="what-you-get">
-    <h2>What's in the file</h2>
-    <ul class="checklist">
-      <li><strong>Copy-paste agent prompt</strong> — give it to Claude, Cursor, or any coding agent and it builds the full n8n workflow</li>
-      <li><strong>Google Ads GAQL queries</strong> — campaign spend, Shopping product performance, and change history detection</li>
-      <li><strong>Revenue join logic</strong> — how to match ad spend to Stripe, Shopify, or your data warehouse</li>
-      <li><strong>Anomaly detection</strong> — auto-alerts when spend, clicks, or impressions swing &gt;25% with change history context</li>
-      <li><strong>Hourly pacing alerts</strong> — know if you're over/under budget before end of day</li>
-      <li><strong>Step-by-step API setup</strong> — Google Ads, Merchant Center, GA4, Sheets, and Slack connections</li>
-    </ul>
-  </div>
+  <!-- What's in the file — visual code-style -->
+  <div class="preview file-preview">
+    <div class="preview-label">What you're downloading &mdash; ppc-profit-intelligence.md</div>
+    <code><span class="kw">PART 1: THE AGENT PROMPT</span>
 
-  <!-- Code preview -->
-  <div class="preview">
-    <div class="preview-label">Preview — from the prompt</div>
-    <code><span class="kw">STEP 3 — JOIN AND CALCULATE</span>
-<span class="dim">Match spend to revenue on campaign ID or product ID.</span>
-<span class="dim">For each campaign/product calculate:</span>
-- True profit = real revenue - ad spend
-- True ROAS  = real revenue / ad spend
-- CPA        = ad spend / conversions
+<span class="dim">Give this to Claude, Cursor, or any coding agent.</span>
+<span class="dim">It builds the full n8n workflow automatically.</span>
 
-<span class="kw">Flag anything where:</span>
-- Google ROAS vs true ROAS differ &gt;20% <span class="dim">(attribution gap)</span>
-- True ROAS below 1.0 <span class="dim">(losing money)</span>
-- Strong true ROAS + low spend <span class="dim">(scaling opportunity)</span></code>
+<span class="step-num">STEP 1</span>  Pull raw spend from Google Ads API
+       <span class="dim">Campaign performance, Shopping product data, CPC, CTR</span>
+
+<span class="step-num">STEP 2</span>  Pull real revenue from your source of truth
+       <span class="dim">Stripe, Shopify, your DB, Looker — not Google's conversions</span>
+
+<span class="step-num">STEP 3</span>  Join &amp; calculate true profit
+       <span class="dim">True ROAS = real revenue / ad spend</span>
+       <span class="dim">Flags: attribution gaps, money losers, scaling opportunities</span>
+
+<span class="step-num">STEP 4</span>  Write daily snapshots to Google Sheets
+       <span class="dim">Builds trend data over time automatically</span>
+
+<span class="step-num">STEP 5</span>  Send daily Slack report
+       <span class="dim">Top 3 winners, bottom 3 losers, anomaly flags</span>
+
+<span class="step-num">BONUS</span>  Anomaly detection + hourly pacing alerts
+       <span class="dim">25%+ swings trigger change history lookups</span>
+       <span class="dim">Hourly spend vs. budget pacing checks</span>
+
+<span class="divider">─────────────────────────────────────────</span>
+
+<span class="kw">PART 2: SETUP STEPS</span>
+
+<span class="dim">Step-by-step API connections:</span>
+  <span class="conn">Google Ads API</span>      <span class="dim">developer token + OAuth2 + GAQL queries</span>
+  <span class="conn">Merchant Center</span>     <span class="dim">product feed health + performance data</span>
+  <span class="conn">GA4 Data API</span>        <span class="dim">traffic paths + landing page performance</span>
+  <span class="conn">Revenue source</span>      <span class="dim">Stripe / Shopify / WooCommerce / DB / CSV</span>
+  <span class="conn">Google Sheets</span>       <span class="dim">daily summary + product performance tabs</span>
+  <span class="conn">Slack</span>               <span class="dim">bot token + alert channel setup</span></code>
   </div>
 
   <!-- Email form -->
